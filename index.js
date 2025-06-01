@@ -29,6 +29,8 @@ app.use(cors({
   },
   credentials: true
 }));
+app.use(express.json()); // ✅ parses JSON bodies
+
 
 // Database configuration
 const { Pool } = require('pg');
