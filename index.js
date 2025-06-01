@@ -11,12 +11,24 @@ require('dotenv').config();
 const app = express();
 
 // Middleware
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:8080',
+  /\.vercel\.app$/  // allow any Vercel frontend
+];
+
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:8080'],
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.some(o =>
+      typeof o === 'string' ? o === origin : o.test(origin)
+    )) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 // Database configuration
 const { Pool } = require('pg');
